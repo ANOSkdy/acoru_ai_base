@@ -39,6 +39,10 @@ pnpm typecheck
 pnpm build
 ```
 
+## UI Design Source of Truth
+
+- Use `DESIGN.md` at the repository root as the canonical UI design standard for all screen implementations.
+
 ## Architecture Summary
 
 - `app/api/v1/**`: thin HTTP route handlers only

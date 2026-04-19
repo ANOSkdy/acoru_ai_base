@@ -1,0 +1,71 @@
+:root {
+  color-scheme: light;
+
+  --font-sans-ja: "Inter", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic UI",
+    "Yu Gothic", "Meiryo", "Noto Sans JP", system-ui, -apple-system, sans-serif;
+
+  --bg-canvas: #f7f9fc;
+  --bg-surface: #ffffff;
+  --bg-surface-muted: #f2f5fb;
+
+  --text-strong: #1f2a37;
+  --text-body: #334155;
+  --text-muted: #5b6777;
+
+  --border-default: #d7dfeb;
+  --border-soft: #e4e9f2;
+
+  --primary-700: #244e8f;
+  --primary-600: #2e5ea8;
+  --primary-100: #eaf0fa;
+
+  --success: #1f7a52;
+  --warning: #9a6700;
+  --danger: #c0392b;
+  --info: #1f5f99;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --shadow-card: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg-canvas);
+  color: var(--text-body);
+  font-family: var(--font-sans-ja);
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+}
+
+main {
+  min-height: 100vh;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  font-size: 0.95em;
+}
+
+a {
+  color: var(--primary-600);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid rgba(46, 94, 168, 0.35);
+  outline-offset: 2px;
+}
