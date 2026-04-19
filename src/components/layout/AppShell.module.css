@@ -1,0 +1,21 @@
+.shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border-default);
+  flex-shrink: 0;
+}
+
+.main {
+  overflow-y: auto;
+  background: var(--bg-canvas);
+  min-height: 100vh;
+}

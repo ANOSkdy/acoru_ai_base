@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Acoru Business Platform Baseline",
-  description: "Reusable baseline repository for Acoru business-platform systems.",
+  title: "Acoru | 業務管理プラットフォーム",
+  description: "Acoru 業務管理プラットフォーム",
 };
 
 type RootLayoutProps = Readonly<{

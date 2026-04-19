@@ -1,0 +1,138 @@
+.page {
+  padding: 32px 32px 48px;
+  max-width: 1100px;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 900px) {
+  .metricsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.metricLabel {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0 0 8px;
+}
+
+.metricValue {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--text-strong);
+  margin: 0 0 4px;
+  line-height: 1.2;
+}
+
+.metricUnit {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 4px;
+}
+
+.metricNote {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.section {
+  margin-bottom: 28px;
+}
+
+.sectionTitle {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  margin: 0 0 12px;
+}
+
+.attentionList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.attentionCard {
+  padding: 14px 20px;
+}
+
+.attentionRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.attentionContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.attentionTitle {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-strong);
+  margin: 0 0 2px;
+}
+
+.attentionDetail {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.activityList {
+  display: flex;
+  flex-direction: column;
+}
+
+.activityItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.activityItemBorder {
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.activityDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary-600);
+  flex-shrink: 0;
+}
+
+.activityContent {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.875rem;
+  color: var(--text-body);
+}
+
+.activityUser {
+  font-weight: 500;
+  color: var(--text-strong);
+  margin-right: 4px;
+}
+
+.activityAction {
+  color: var(--text-body);
+}
+
+.activityTime {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
