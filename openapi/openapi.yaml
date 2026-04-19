@@ -1,0 +1,328 @@
+openapi: 3.1.0
+info:
+  title: Acoru Business Platform Baseline API
+  version: 0.1.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/v1/health/db:
+    get:
+      summary: Check database connectivity
+      responses:
+        "200":
+          description: Database connection succeeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                      checkedAt:
+                        type: string
+                      database:
+                        type: string
+                      connectionSource:
+                        type: string
+                    required: [status, checkedAt, database, connectionSource]
+  /api/v1/attendance/logs:
+    post:
+      summary: Create an attendance log
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAttendanceLogRequest"
+      responses:
+        "201":
+          description: Attendance log created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AttendanceLogResponse"
+  /api/v1/work-sessions:
+    get:
+      summary: List work sessions
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [draft, submitted, approved, rejected]
+        - in: query
+          name: userId
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 20
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Work sessions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WorkSession"
+                  meta:
+                    type: object
+                    properties:
+                      limit:
+                        type: integer
+                      offset:
+                        type: integer
+  /api/v1/work-sessions/{id}:
+    get:
+      summary: Get a work session
+      parameters:
+        - $ref: "#/components/parameters/WorkSessionId"
+      responses:
+        "200":
+          description: Work session detail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/WorkSession"
+        "404":
+          description: Work session not found
+  /api/v1/work-sessions/{id}/approve:
+    post:
+      summary: Approve a work session
+      parameters:
+        - $ref: "#/components/parameters/WorkSessionId"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: string
+                  nullable: true
+      responses:
+        "200":
+          description: Work session approved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      status:
+                        type: string
+                      approved_at:
+                        type: string
+                        nullable: true
+                      approved_by:
+                        type: string
+                        nullable: true
+        "404":
+          description: Work session not found
+  /api/v1/closing-periods:
+    post:
+      summary: Create a closing period
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateClosingPeriodRequest"
+      responses:
+        "201":
+          description: Closing period created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClosingPeriodResponse"
+  /api/v1/closing-periods/{id}/close:
+    post:
+      summary: Close a closing period
+      parameters:
+        - $ref: "#/components/parameters/ClosingPeriodId"
+      responses:
+        "200":
+          description: Closing period closed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClosingPeriodResponse"
+        "404":
+          description: Closing period not found
+components:
+  parameters:
+    WorkSessionId:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
+        format: uuid
+    ClosingPeriodId:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    CreateAttendanceLogRequest:
+      type: object
+      properties:
+        siteId:
+          type: string
+          format: uuid
+          nullable: true
+        logType:
+          type: string
+          enum: [clock_in, clock_out, break_start, break_end]
+        occurredAt:
+          type: string
+          format: date-time
+        source:
+          type: string
+          enum: [manual, mobile, web, system]
+        workSessionId:
+          type: string
+          format: uuid
+          nullable: true
+        metadata:
+          type: object
+          additionalProperties: true
+      required: [logType, occurredAt]
+    AttendanceLogResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            organization_id:
+              type: string
+              format: uuid
+            user_id:
+              type: string
+              format: uuid
+            site_id:
+              type: string
+              format: uuid
+              nullable: true
+            log_type:
+              type: string
+            occurred_at:
+              type: string
+            source:
+              type: string
+            work_session_id:
+              type: string
+              format: uuid
+              nullable: true
+            metadata:
+              type: object
+              additionalProperties: true
+    WorkSession:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        organization_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        project_id:
+          type: string
+          format: uuid
+          nullable: true
+        site_id:
+          type: string
+          format: uuid
+          nullable: true
+        work_category_id:
+          type: string
+          format: uuid
+          nullable: true
+        session_date:
+          type: string
+        started_at:
+          type: string
+        ended_at:
+          type: string
+          nullable: true
+        status:
+          type: string
+        notes:
+          type: string
+          nullable: true
+        approved_at:
+          type: string
+          nullable: true
+        approved_by:
+          type: string
+          nullable: true
+    CreateClosingPeriodRequest:
+      type: object
+      properties:
+        label:
+          type: string
+        periodStart:
+          type: string
+          format: date
+        periodEnd:
+          type: string
+          format: date
+      required: [label, periodStart, periodEnd]
+    ClosingPeriodResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            organization_id:
+              type: string
+              format: uuid
+            label:
+              type: string
+            period_start:
+              type: string
+            period_end:
+              type: string
+            status:
+              type: string
+            closed_at:
+              type: string
+              nullable: true
+            closed_by:
+              type: string
+              nullable: true
