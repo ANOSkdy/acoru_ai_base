@@ -2,17 +2,20 @@
 
 import { useState } from "react";
 import type { FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/src/components/ui/Button";
 import { Input } from "@/src/components/ui/Input";
 import styles from "./page.module.css";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    // 認証は未実装 — この PR では UI のみ
+    // 開発用の仮遷移。認証機能は未実装。
+    router.push("/app/dashboard");
   }
 
   return (
