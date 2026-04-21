@@ -29,6 +29,57 @@ paths:
                         type: string
                     required: [status, checkedAt, database, connectionSource]
   /api/v1/attendance/logs:
+    get:
+      summary: List attendance logs
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+        - in: query
+          name: logType
+          schema:
+            type: string
+            enum: [clock_in, clock_out, break_start, break_end]
+        - in: query
+          name: siteId
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: dateFrom
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: dateTo
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 50
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Attendance log list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AttendanceLog"
+                  meta:
+                    $ref: "#/components/schemas/ListMeta"
     post:
       summary: Create an attendance log
       requestBody:
@@ -44,6 +95,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AttendanceLogResponse"
+  /api/v1/attendance/logs/{id}:
+    get:
+      summary: Get an attendance log
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      responses:
+        "200":
+          description: Attendance log detail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AttendanceLog"
+        "404":
+          description: Attendance log not found
   /api/v1/work-sessions:
     get:
       summary: List work sessions
@@ -58,6 +126,21 @@ paths:
           schema:
             type: string
             format: uuid
+        - in: query
+          name: siteId
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: dateFrom
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: dateTo
+          schema:
+            type: string
+            format: date
         - in: query
           name: limit
           schema:
@@ -79,7 +162,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/WorkSession"
+                      $ref: "#/components/schemas/WorkSessionListItem"
                   meta:
                     type: object
                     properties:
@@ -101,9 +184,33 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: "#/components/schemas/WorkSession"
+                    $ref: "#/components/schemas/WorkSessionDetail"
         "404":
           description: Work session not found
+    patch:
+      summary: Update a work session
+      parameters:
+        - $ref: "#/components/parameters/WorkSessionId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateWorkSessionRequest"
+      responses:
+        "200":
+          description: Work session updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/WorkSession"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "404":
+          description: Work session not found or already approved
   /api/v1/work-sessions/{id}/approve:
     post:
       summary: Approve a work session
@@ -143,7 +250,168 @@ paths:
                         nullable: true
         "404":
           description: Work session not found
+  /api/v1/approvals:
+    get:
+      summary: List approval requests
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [pending, approved, rejected]
+        - in: query
+          name: targetType
+          schema:
+            type: string
+        - in: query
+          name: requester
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: dateFrom
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: dateTo
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 50
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Approval request list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ApprovalRequestListItem"
+                  meta:
+                    $ref: "#/components/schemas/ListMeta"
+  /api/v1/approvals/{id}:
+    get:
+      summary: Get an approval request
+      parameters:
+        - $ref: "#/components/parameters/ApprovalRequestId"
+      responses:
+        "200":
+          description: Approval request detail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/ApprovalRequestDetail"
+        "404":
+          description: Approval request not found
+  /api/v1/approvals/{id}/approve:
+    post:
+      summary: Approve an approval request
+      parameters:
+        - $ref: "#/components/parameters/ApprovalRequestId"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewApprovalRequest"
+      responses:
+        "200":
+          description: Approval request approved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/ApprovalRequest"
+        "404":
+          description: Approval request not found
+        "409":
+          description: Approval request is not pending
+  /api/v1/approvals/{id}/reject:
+    post:
+      summary: Reject an approval request
+      parameters:
+        - $ref: "#/components/parameters/ApprovalRequestId"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewApprovalRequest"
+      responses:
+        "200":
+          description: Approval request rejected
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/ApprovalRequest"
+        "404":
+          description: Approval request not found
+        "409":
+          description: Approval request is not pending
   /api/v1/closing-periods:
+    get:
+      summary: List closing periods
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [open, closed]
+        - in: query
+          name: dateFrom
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: dateTo
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 50
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Closing period list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ClosingPeriod"
+                  meta:
+                    $ref: "#/components/schemas/ListMeta"
     post:
       summary: Create a closing period
       requestBody:
@@ -159,6 +427,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ClosingPeriodResponse"
+  /api/v1/closing-periods/{id}:
+    get:
+      summary: Get a closing period
+      parameters:
+        - $ref: "#/components/parameters/ClosingPeriodId"
+      responses:
+        "200":
+          description: Closing period detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClosingPeriodResponse"
+        "404":
+          description: Closing period not found
   /api/v1/clients:
     get:
       summary: List clients
@@ -498,6 +780,13 @@ components:
       schema:
         type: string
         format: uuid
+    ApprovalRequestId:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
+        format: uuid
     WorkSessionId:
       in: path
       name: id
@@ -541,34 +830,52 @@ components:
       type: object
       properties:
         data:
+          $ref: "#/components/schemas/AttendanceLog"
+    AttendanceLog:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        organization_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        site_id:
+          type: string
+          format: uuid
+          nullable: true
+        log_type:
+          type: string
+        occurred_at:
+          type: string
+        source:
+          type: string
+        work_session_id:
+          type: string
+          format: uuid
+          nullable: true
+        metadata:
           type: object
-          properties:
-            id:
-              type: string
-              format: uuid
-            organization_id:
-              type: string
-              format: uuid
-            user_id:
-              type: string
-              format: uuid
-            site_id:
-              type: string
-              format: uuid
-              nullable: true
-            log_type:
-              type: string
-            occurred_at:
-              type: string
-            source:
-              type: string
-            work_session_id:
-              type: string
-              format: uuid
-              nullable: true
-            metadata:
-              type: object
-              additionalProperties: true
+          additionalProperties: true
+        created_at:
+          type: string
+        user_display_name:
+          type: string
+        user_employee_code:
+          type: string
+          nullable: true
+        site_name:
+          type: string
+          nullable: true
+        work_session_status:
+          type: string
+          nullable: true
+        work_session_session_date:
+          type: string
+          nullable: true
     WorkSession:
       type: object
       properties:
@@ -611,6 +918,273 @@ components:
         approved_by:
           type: string
           nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        user_display_name:
+          type: string
+        user_employee_code:
+          type: string
+          nullable: true
+        project_name:
+          type: string
+          nullable: true
+        site_name:
+          type: string
+          nullable: true
+        work_category_name:
+          type: string
+          nullable: true
+        approved_by_name:
+          type: string
+          nullable: true
+    WorkSessionListItem:
+      allOf:
+        - $ref: "#/components/schemas/WorkSession"
+    WorkSessionDetail:
+      allOf:
+        - $ref: "#/components/schemas/WorkSession"
+        - type: object
+          properties:
+            attendanceLogs:
+              type: array
+              items:
+                $ref: "#/components/schemas/WorkSessionAttendanceLog"
+            workEntries:
+              type: array
+              items:
+                $ref: "#/components/schemas/WorkEntry"
+            approvalSummary:
+              anyOf:
+                - $ref: "#/components/schemas/WorkSessionApprovalSummary"
+                - type: "null"
+    WorkSessionAttendanceLog:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        attendance_log_id:
+          type: string
+          format: uuid
+          nullable: true
+        event_type:
+          type: string
+        created_at:
+          type: string
+        occurred_at:
+          type: string
+          nullable: true
+        log_type:
+          type: string
+          nullable: true
+        source:
+          type: string
+          nullable: true
+        user_id:
+          type: string
+          format: uuid
+          nullable: true
+        user_display_name:
+          type: string
+          nullable: true
+        site_name:
+          type: string
+          nullable: true
+    WorkEntry:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        work_session_id:
+          type: string
+          format: uuid
+        entry_date:
+          type: string
+        minutes_worked:
+          type: integer
+        notes:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    WorkSessionApprovalSummary:
+      type: object
+      properties:
+        request_id:
+          type: string
+          format: uuid
+        request_status:
+          type: string
+        requested_by:
+          type: string
+          format: uuid
+          nullable: true
+        requested_by_name:
+          type: string
+          nullable: true
+        reviewed_at:
+          type: string
+          nullable: true
+        reviewer_user_id:
+          type: string
+          format: uuid
+          nullable: true
+        reviewer_name:
+          type: string
+          nullable: true
+        comment:
+          type: string
+          nullable: true
+    UpdateWorkSessionRequest:
+      type: object
+      required: [startedAt]
+      properties:
+        startedAt:
+          type: string
+          format: date-time
+        endedAt:
+          type: string
+          format: date-time
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+    ReviewApprovalRequest:
+      type: object
+      properties:
+        comment:
+          type: string
+          nullable: true
+    ApprovalRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        organization_id:
+          type: string
+          format: uuid
+        target_type:
+          type: string
+        target_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        requested_by:
+          type: string
+          format: uuid
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    ApprovalRequestListItem:
+      allOf:
+        - $ref: "#/components/schemas/ApprovalRequest"
+        - type: object
+          properties:
+            requester_name:
+              type: string
+              nullable: true
+            current_approver_id:
+              type: string
+              format: uuid
+              nullable: true
+            current_approver_name:
+              type: string
+              nullable: true
+            target_summary:
+              type: string
+    ApprovalStep:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        approval_request_id:
+          type: string
+          format: uuid
+        step_order:
+          type: integer
+        reviewer_user_id:
+          type: string
+          format: uuid
+          nullable: true
+        reviewer_name:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        reviewed_at:
+          type: string
+          nullable: true
+        comment:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    WorkSessionApprovalTargetSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        session_date:
+          type: string
+        status:
+          type: string
+        started_at:
+          type: string
+        ended_at:
+          type: string
+          nullable: true
+        user_display_name:
+          type: string
+        user_employee_code:
+          type: string
+          nullable: true
+        project_name:
+          type: string
+          nullable: true
+        site_name:
+          type: string
+          nullable: true
+    ApprovalRequestDetail:
+      allOf:
+        - $ref: "#/components/schemas/ApprovalRequest"
+        - type: object
+          properties:
+            requester_name:
+              type: string
+              nullable: true
+            requester_employee_code:
+              type: string
+              nullable: true
+            current_approver_id:
+              type: string
+              format: uuid
+              nullable: true
+            current_approver_name:
+              type: string
+              nullable: true
+            steps:
+              type: array
+              items:
+                $ref: "#/components/schemas/ApprovalStep"
+            targetSummary:
+              anyOf:
+                - $ref: "#/components/schemas/WorkSessionApprovalTargetSummary"
+                - type: "null"
     CreateClosingPeriodRequest:
       type: object
       properties:
@@ -824,25 +1398,43 @@ components:
       type: object
       properties:
         data:
-          type: object
-          properties:
-            id:
-              type: string
-              format: uuid
-            organization_id:
-              type: string
-              format: uuid
-            label:
-              type: string
-            period_start:
-              type: string
-            period_end:
-              type: string
-            status:
-              type: string
-            closed_at:
-              type: string
-              nullable: true
-            closed_by:
-              type: string
-              nullable: true
+          $ref: "#/components/schemas/ClosingPeriod"
+    ClosingPeriod:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        organization_id:
+          type: string
+          format: uuid
+        label:
+          type: string
+        period_start:
+          type: string
+        period_end:
+          type: string
+        status:
+          type: string
+          enum: [open, closed]
+        created_by:
+          type: string
+          format: uuid
+          nullable: true
+        created_by_name:
+          type: string
+          nullable: true
+        closed_at:
+          type: string
+          nullable: true
+        closed_by:
+          type: string
+          format: uuid
+          nullable: true
+        closed_by_name:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string

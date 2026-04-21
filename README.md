@@ -27,6 +27,8 @@ Migration runtime resolves connection strings in this order:
 4. `NEON_DATABASE_URL`
 
 Copy `.env.example` to `.env.local` and provide at least one valid database URL.
+The local migration CLI reads `.env.local` before resolving `MIGRATION_DATABASE_URL`, `DATABASE_URL_DIRECT`, `DATABASE_URL`, and `NEON_DATABASE_URL`.
+For predictable local verification, keep the application and migration targets aligned unless you intentionally need them to differ.
 
 ## Commands
 
@@ -38,6 +40,12 @@ pnpm lint
 pnpm typecheck
 pnpm build
 ```
+
+Local verification entry points:
+
+- `http://localhost:3000/login` currently stays UI-first and advances to `/app/dashboard`
+- `http://localhost:3000/app` redirects to `/app/dashboard`
+- `http://localhost:3000/api/v1/health/db` helps diagnose missing env, missing migrations, and runtime/migration target mismatches
 
 ## UI Design Source of Truth
 

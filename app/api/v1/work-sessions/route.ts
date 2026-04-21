@@ -18,6 +18,9 @@ export async function GET(request: NextRequest) {
       organizationId: auth.organizationId,
       status: query.status,
       userId: query.userId,
+      siteId: query.siteId,
+      dateFrom: query.dateFrom,
+      dateTo: query.dateTo,
       limit: query.limit,
       offset: query.offset,
     });

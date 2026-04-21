@@ -1,14 +1,20 @@
-import "server-only";
-
+import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
-import process from "node:process";
+import process, { loadEnvFile } from "node:process";
 
 import { Pool } from "pg";
 
-import { getMigrationDatabaseConfig } from "./client";
+import { getMigrationDatabaseConfig } from "./config";
 
+const LOCAL_ENV_FILE = path.join(process.cwd(), ".env.local");
 const MIGRATIONS_DIR = path.join(process.cwd(), "src", "server", "db", "migrations");
+
+function loadLocalEnv(): void {
+  if (existsSync(LOCAL_ENV_FILE)) {
+    loadEnvFile(LOCAL_ENV_FILE);
+  }
+}
 
 type AppliedMigration = {
   filename: string;
@@ -83,6 +89,7 @@ async function printStatus(pool: Pool): Promise<void> {
 }
 
 async function run(): Promise<void> {
+  loadLocalEnv();
   const command = process.argv[2] ?? "up";
   const config = getMigrationDatabaseConfig();
   const pool = new Pool({

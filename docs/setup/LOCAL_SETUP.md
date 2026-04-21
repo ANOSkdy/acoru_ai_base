@@ -19,6 +19,8 @@ Set one of the supported database URLs:
 - `NEON_DATABASE_URL`
 
 For migrations, `MIGRATION_DATABASE_URL` can override the application connection string.
+The local migration CLI reads `.env.local`, so `pnpm db:migrate` and `pnpm db:migrate:status` can use the same local database values as `pnpm dev`.
+For predictable local verification, keep the app runtime and migration runtime pointed at the same database unless you intentionally need separate targets.
 
 ## 3. Install dependencies
 
@@ -40,6 +42,10 @@ pnpm dev
 ```
 
 Open `http://localhost:3000`.
+
+- `http://localhost:3000/login` routes to `/app/dashboard` for local baseline verification.
+- `http://localhost:3000/app` redirects to `/app/dashboard`.
+- `http://localhost:3000/api/v1/health/db` reports which runtime and migration env keys are currently selected.
 
 ## 6. Verify the baseline
 

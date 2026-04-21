@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 
-import { getDatabaseConfig } from "@/src/server/db/client";
+import { classifyDatabaseSetupIssue } from "@/src/lib/database-setup";
+import {
+  getDatabaseConfig,
+  getDatabaseConfigStatus,
+  getMigrationDatabaseConfigStatus,
+} from "@/src/server/db/client";
 import { getDatabaseHealth } from "@/src/server/db/queries/health";
 
 export const runtime = "nodejs";
@@ -19,11 +24,23 @@ export async function GET() {
       },
     });
   } catch (error) {
+    const issue = classifyDatabaseSetupIssue(error);
+
     return NextResponse.json(
       {
         data: {
           status: "error",
-          message: error instanceof Error ? error.message : "Database health check failed",
+          code: issue?.code ?? "unknown_error",
+          message:
+            issue?.summary ??
+            (error instanceof Error ? error.message : "Database health check failed"),
+          detail: issue?.detail,
+          nextSteps: issue?.nextSteps ?? [
+            "Check .env.local and verify the runtime database connection settings.",
+            "Run pnpm db:migrate if the target database has not been initialized yet.",
+          ],
+          runtimeConfig: getDatabaseConfigStatus(),
+          migrationConfig: getMigrationDatabaseConfigStatus(),
         },
       },
       { status: 500 },

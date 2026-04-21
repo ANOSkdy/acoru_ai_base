@@ -3,7 +3,11 @@ import { ZodError } from "zod";
 
 import { requireServerAuth } from "@/src/server/auth/require-server-auth";
 import { getWorkSessionService } from "@/src/server/services/work-sessions/get-work-session";
-import { workSessionIdParamsSchema } from "@/src/server/validation/work-sessions";
+import { updateWorkSessionService } from "@/src/server/services/work-sessions/update-work-session";
+import {
+  updateWorkSessionSchema,
+  workSessionIdParamsSchema,
+} from "@/src/server/validation/work-sessions";
 
 export const runtime = "nodejs";
 
@@ -26,6 +30,43 @@ export async function GET(request: NextRequest, context: RouteContext) {
     if (error instanceof ZodError) {
       return NextResponse.json(
         { error: "Invalid route params", issues: error.flatten() },
+        { status: 400 },
+      );
+    }
+
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function PATCH(request: NextRequest, context: RouteContext) {
+  try {
+    const auth = requireServerAuth(request);
+    const params = workSessionIdParamsSchema.parse(await context.params);
+    const payload = updateWorkSessionSchema.parse(await request.json());
+    const workSession = await updateWorkSessionService({
+      organizationId: auth.organizationId,
+      workSessionId: params.id,
+      actorUserId: auth.actorUserId,
+      startedAt: payload.startedAt,
+      endedAt: payload.endedAt ?? null,
+      notes: payload.notes ?? null,
+    });
+
+    if (!workSession) {
+      return NextResponse.json(
+        { error: "Work session not found or already approved" },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json({ data: workSession });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return NextResponse.json(
+        { error: "Invalid request", issues: error.flatten() },
         { status: 400 },
       );
     }
