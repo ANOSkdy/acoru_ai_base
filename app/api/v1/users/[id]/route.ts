@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { ZodError } from "zod";
 
 import { requireServerAuth } from "@/src/server/auth/require-server-auth";
-import { getUserService } from "@/src/server/services/users/get-user";
+import { getUserWithRolesService } from "@/src/server/services/users/get-user";
 import { updateUserService } from "@/src/server/services/users/update-user";
 import {
   updateUserSchema,
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
     const auth = requireServerAuth(request);
     const { id } = userIdParamsSchema.parse(await context.params);
 
-    const row = await getUserService(auth.organizationId, id);
+    const row = await getUserWithRolesService(auth.organizationId, id);
 
     if (!row) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -52,6 +52,8 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       actorUserId: auth.actorUserId,
       id,
       ...body,
+      orgUnitId: body.orgUnitId || undefined,
+      roleIds: body.roleIds,
     });
 
     if (!row) {

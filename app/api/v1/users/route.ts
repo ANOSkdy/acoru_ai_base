@@ -56,6 +56,8 @@ export async function POST(request: NextRequest) {
       displayName: body.displayName,
       email: body.email,
       status: body.status,
+      orgUnitId: body.orgUnitId || undefined,
+      roleIds: body.roleIds,
     });
 
     return NextResponse.json({ data: row }, { status: 201 });

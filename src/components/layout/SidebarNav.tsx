@@ -27,6 +27,9 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "勤務区分", href: "/app/master/work-categories" },
       { label: "勤怠ポリシー", href: "/app/master/attendance-policies" },
       { label: "ユーザー", href: "/app/master/users" },
+      { label: "ロール", href: "/app/master/roles" },
+      { label: "組織", href: "/app/master/organizations" },
+      { label: "組織ユニット", href: "/app/master/org-units" },
     ],
   },
 ];
