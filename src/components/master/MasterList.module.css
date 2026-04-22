@@ -77,6 +77,12 @@
   background: #244e8f;
 }
 
+.clearLink {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
