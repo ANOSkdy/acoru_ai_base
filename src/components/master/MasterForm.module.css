@@ -104,3 +104,27 @@
   color: #c0392b;
   margin-bottom: 16px;
 }
+
+.textarea {
+  width: 100%;
+  min-height: 200px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  color: var(--text-body);
+  background: var(--bg-surface);
+  resize: vertical;
+  outline: none;
+}
+
+.textarea:focus {
+  border-color: var(--primary-600);
+  box-shadow: 0 0 0 3px rgba(46, 94, 168, 0.12);
+}
+
+.textareaError {
+  border-color: #c0392b;
+}

@@ -25,6 +25,7 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "プロジェクト", href: "/app/master/projects" },
       { label: "現場", href: "/app/master/sites" },
       { label: "勤務区分", href: "/app/master/work-categories" },
+      { label: "勤怠ポリシー", href: "/app/master/attendance-policies" },
     ],
   },
 ];

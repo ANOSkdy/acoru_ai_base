@@ -838,6 +838,99 @@ paths:
           $ref: "#/components/responses/ValidationError"
         "404":
           description: Work category not found
+  /api/v1/attendance-policies:
+    get:
+      summary: List attendance policies
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 50
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Attendance policy list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AttendancePolicy"
+                  meta:
+                    $ref: "#/components/schemas/ListMeta"
+    post:
+      summary: Create an attendance policy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAttendancePolicyRequest"
+      responses:
+        "201":
+          description: Attendance policy created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AttendancePolicy"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+  /api/v1/attendance-policies/{id}:
+    get:
+      summary: Get an attendance policy
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      responses:
+        "200":
+          description: Attendance policy detail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AttendancePolicy"
+        "404":
+          description: Attendance policy not found
+    patch:
+      summary: Update an attendance policy
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAttendancePolicyRequest"
+      responses:
+        "200":
+          description: Attendance policy updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AttendancePolicy"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "404":
+          description: Attendance policy not found
   /api/v1/closing-periods/{id}/close:
     post:
       summary: Close a closing period
@@ -1533,6 +1626,47 @@ components:
           type: string
         isBillable:
           type: boolean
+    AttendancePolicy:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        organization_id:
+          type: string
+          format: uuid
+        code:
+          type: string
+        name:
+          type: string
+        rules:
+          type: object
+          additionalProperties: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    CreateAttendancePolicyRequest:
+      type: object
+      required: [code, name, rules]
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        rules:
+          type: object
+          additionalProperties: true
+    UpdateAttendancePolicyRequest:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        rules:
+          type: object
+          additionalProperties: true
     ClosingPeriodResponse:
       type: object
       properties:
