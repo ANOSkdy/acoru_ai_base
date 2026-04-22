@@ -136,3 +136,32 @@
   flex-shrink: 0;
   white-space: nowrap;
 }
+
+@media (max-width: 768px) {
+  .page {
+    padding: 16px 16px 32px;
+  }
+
+  .metricsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .attentionCard {
+    padding: 12px 14px;
+  }
+
+  .attentionRow {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .activityItem {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .activityTime {
+    white-space: normal;
+  }
+}

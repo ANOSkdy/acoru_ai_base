@@ -77,12 +77,14 @@ type MasterListTableShellProps = {
 
 export function MasterListTableShell({ headers, rows }: MasterListTableShellProps) {
   return (
-    <table className={styles.table}>
-      <thead>
-        <tr>{headers}</tr>
-      </thead>
-      <tbody>{rows}</tbody>
-    </table>
+    <div className={styles.tableWrap}>
+      <table className={styles.table}>
+        <thead>
+          <tr>{headers}</tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </table>
+    </div>
   );
 }
 
