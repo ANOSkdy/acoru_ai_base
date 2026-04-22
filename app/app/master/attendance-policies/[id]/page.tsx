@@ -5,10 +5,9 @@ import { notFound } from "next/navigation";
 import { PageHeader } from "@/src/components/layout/PageHeader";
 import { Button } from "@/src/components/ui/Button";
 import { Card } from "@/src/components/ui/Card";
+import { getServerOrganizationId } from "@/src/server/auth/get-server-organization-id";
 import { getAttendancePolicyService } from "@/src/server/services/attendance-policies/get-attendance-policy";
 import styles from "@/src/components/master/MasterDetail.module.css";
-
-const FALLBACK_ORG_ID = "00000000-0000-0000-0000-000000000001";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -16,7 +15,8 @@ type PageProps = {
 
 export default async function AttendancePolicyDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const attendancePolicy = await getAttendancePolicyService(FALLBACK_ORG_ID, id);
+  const organizationId = await getServerOrganizationId();
+  const attendancePolicy = await getAttendancePolicyService(organizationId, id);
 
   if (!attendancePolicy) notFound();
 

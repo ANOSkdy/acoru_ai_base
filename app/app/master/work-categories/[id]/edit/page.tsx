@@ -5,10 +5,9 @@ import { notFound } from "next/navigation";
 import { PageHeader } from "@/src/components/layout/PageHeader";
 import { WorkCategoryForm } from "@/src/components/master/WorkCategoryForm";
 import { Card } from "@/src/components/ui/Card";
+import { getServerOrganizationId } from "@/src/server/auth/get-server-organization-id";
 import { getWorkCategoryService } from "@/src/server/services/work-categories/get-work-category";
 import styles from "@/src/components/master/MasterForm.module.css";
-
-const FALLBACK_ORG_ID = "00000000-0000-0000-0000-000000000001";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -16,7 +15,8 @@ type PageProps = {
 
 export default async function EditWorkCategoryPage({ params }: PageProps) {
   const { id } = await params;
-  const workCategory = await getWorkCategoryService(FALLBACK_ORG_ID, id);
+  const organizationId = await getServerOrganizationId();
+  const workCategory = await getWorkCategoryService(organizationId, id);
 
   if (!workCategory) notFound();
 
