@@ -6,10 +6,9 @@ import {
   MasterListPageFrame,
   MasterListTableShell,
 } from "@/src/components/master/MasterListFoundation";
+import { getServerOrganizationId } from "@/src/server/auth/get-server-organization-id";
 import { listAttendancePoliciesService } from "@/src/server/services/attendance-policies/list-attendance-policies";
 import styles from "@/src/components/master/MasterList.module.css";
-
-const FALLBACK_ORG_ID = "00000000-0000-0000-0000-000000000001";
 
 type PageProps = {
   searchParams: Promise<Record<string, string | undefined>>;
@@ -18,9 +17,10 @@ type PageProps = {
 export default async function AttendancePoliciesPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const q = params.q?.trim() ?? undefined;
+  const organizationId = await getServerOrganizationId();
 
   const items = await listAttendancePoliciesService({
-    organizationId: FALLBACK_ORG_ID,
+    organizationId,
     search: q,
     limit: 50,
     offset: 0,

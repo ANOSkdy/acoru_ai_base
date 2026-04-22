@@ -7,10 +7,9 @@ import {
   MasterListPageFrame,
   MasterListTableShell,
 } from "@/src/components/master/MasterListFoundation";
+import { getServerOrganizationId } from "@/src/server/auth/get-server-organization-id";
 import { listWorkCategoriesService } from "@/src/server/services/work-categories/list-work-categories";
 import styles from "@/src/components/master/MasterList.module.css";
-
-const FALLBACK_ORG_ID = "00000000-0000-0000-0000-000000000001";
 
 type PageProps = {
   searchParams: Promise<Record<string, string | undefined>>;
@@ -19,9 +18,10 @@ type PageProps = {
 export default async function WorkCategoriesPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const q = params.q?.trim() ?? undefined;
+  const organizationId = await getServerOrganizationId();
 
   const items = await listWorkCategoriesService({
-    organizationId: FALLBACK_ORG_ID,
+    organizationId,
     search: q,
     limit: 50,
     offset: 0,
