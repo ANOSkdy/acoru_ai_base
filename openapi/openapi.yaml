@@ -745,6 +745,99 @@ paths:
           $ref: "#/components/responses/ValidationError"
         "404":
           description: Site not found
+  /api/v1/work-categories:
+    get:
+      summary: List work categories
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 50
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Work category list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WorkCategory"
+                  meta:
+                    $ref: "#/components/schemas/ListMeta"
+    post:
+      summary: Create a work category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWorkCategoryRequest"
+      responses:
+        "201":
+          description: Work category created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/WorkCategory"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+  /api/v1/work-categories/{id}:
+    get:
+      summary: Get a work category
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      responses:
+        "200":
+          description: Work category detail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/WorkCategory"
+        "404":
+          description: Work category not found
+    patch:
+      summary: Update a work category
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateWorkCategoryRequest"
+      responses:
+        "200":
+          description: Work category updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/WorkCategory"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "404":
+          description: Work category not found
   /api/v1/closing-periods/{id}/close:
     post:
       summary: Close a closing period
@@ -1394,6 +1487,52 @@ components:
         status:
           type: string
           enum: [active, inactive]
+    WorkCategory:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        organization_id:
+          type: string
+          format: uuid
+        code:
+          type: string
+        name:
+          type: string
+        category_type:
+          type: string
+        is_billable:
+          type: boolean
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    CreateWorkCategoryRequest:
+      type: object
+      required: [code, name]
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        categoryType:
+          type: string
+          default: standard
+        isBillable:
+          type: boolean
+          default: true
+    UpdateWorkCategoryRequest:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        categoryType:
+          type: string
+        isBillable:
+          type: boolean
     ClosingPeriodResponse:
       type: object
       properties:
