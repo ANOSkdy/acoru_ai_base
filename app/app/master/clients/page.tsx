@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { Badge } from "@/src/components/ui/Badge";
 import {
   MasterListEmptyState,
@@ -8,10 +9,9 @@ import {
   MasterListPageFrame,
   MasterListTableShell,
 } from "@/src/components/master/MasterListFoundation";
+import { getServerOrganizationId } from "@/src/server/auth/get-server-organization-id";
 import { listClientsService } from "@/src/server/services/clients/list-clients";
 import styles from "@/src/components/master/MasterList.module.css";
-
-const FALLBACK_ORG_ID = "00000000-0000-0000-0000-000000000001";
 
 type PageProps = {
   searchParams: Promise<Record<string, string | undefined>>;
@@ -19,13 +19,16 @@ type PageProps = {
 
 export default async function ClientsPage({ searchParams }: PageProps) {
   const params = await searchParams;
+  const organizationId = await getServerOrganizationId();
+  if (!organizationId) notFound();
+
   const q = params.q?.trim() ?? undefined;
   const status = params.status === "active" || params.status === "inactive"
     ? params.status
     : undefined;
 
   const items = await listClientsService({
-    organizationId: FALLBACK_ORG_ID,
+    organizationId,
     search: q,
     status,
     limit: 50,
