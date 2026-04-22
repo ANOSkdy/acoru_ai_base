@@ -3,9 +3,10 @@ import "server-only";
 import type { NextRequest } from "next/server";
 
 import type { AuthContext } from "@/src/server/db/types";
-
-const FALLBACK_USER_ID = "00000000-0000-0000-0000-000000000100";
-const FALLBACK_ORG_ID = "00000000-0000-0000-0000-000000000001";
+import {
+  FALLBACK_ORG_ID,
+  FALLBACK_USER_ID,
+} from "@/src/server/auth/fallback-auth-context";
 
 export function requireServerAuth(request: NextRequest): AuthContext {
   const actorUserId =
