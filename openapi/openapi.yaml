@@ -539,6 +539,104 @@ paths:
           $ref: "#/components/responses/ValidationError"
         "404":
           description: Client not found
+  /api/v1/users:
+    get:
+      summary: List users
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [active, inactive]
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 50
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: User list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+                  meta:
+                    $ref: "#/components/schemas/ListMeta"
+    post:
+      summary: Create a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/User"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+  /api/v1/users/{id}:
+    get:
+      summary: Get a user
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      responses:
+        "200":
+          description: User detail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/User"
+        "404":
+          description: User not found
+    patch:
+      summary: Update a user
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+      responses:
+        "200":
+          description: User updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/User"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "404":
+          description: User not found
   /api/v1/projects:
     get:
       summary: List projects
@@ -1429,6 +1527,57 @@ components:
           type: string
         name:
           type: string
+        status:
+          type: string
+          enum: [active, inactive]
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        organization_id:
+          type: string
+          format: uuid
+        employee_code:
+          type: string
+          nullable: true
+        display_name:
+          type: string
+        email:
+          type: string
+        status:
+          type: string
+          enum: [active, inactive]
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    CreateUserRequest:
+      type: object
+      required: [displayName, email]
+      properties:
+        employeeCode:
+          type: string
+        displayName:
+          type: string
+        email:
+          type: string
+          format: email
+        status:
+          type: string
+          enum: [active, inactive]
+          default: active
+    UpdateUserRequest:
+      type: object
+      properties:
+        employeeCode:
+          type: string
+        displayName:
+          type: string
+        email:
+          type: string
+          format: email
         status:
           type: string
           enum: [active, inactive]
