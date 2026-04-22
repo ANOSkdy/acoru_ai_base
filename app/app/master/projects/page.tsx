@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { Badge } from "@/src/components/ui/Badge";
 import {
   MasterListEmptyState,
@@ -8,10 +9,9 @@ import {
   MasterListPageFrame,
   MasterListTableShell,
 } from "@/src/components/master/MasterListFoundation";
+import { getServerOrganizationId } from "@/src/server/auth/get-server-organization-id";
 import { listProjectsService } from "@/src/server/services/projects/list-projects";
 import styles from "@/src/components/master/MasterList.module.css";
-
-const FALLBACK_ORG_ID = "00000000-0000-0000-0000-000000000001";
 
 type PageProps = {
   searchParams: Promise<Record<string, string | undefined>>;
@@ -19,13 +19,16 @@ type PageProps = {
 
 export default async function ProjectsPage({ searchParams }: PageProps) {
   const params = await searchParams;
+  const organizationId = await getServerOrganizationId();
+  if (!organizationId) notFound();
+
   const q = params.q?.trim() ?? undefined;
   const status = params.status === "active" || params.status === "inactive"
     ? params.status
     : undefined;
 
   const items = await listProjectsService({
-    organizationId: FALLBACK_ORG_ID,
+    organizationId,
     search: q,
     status,
     limit: 50,
@@ -55,6 +58,7 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
               <th className={styles.th}>取引先</th>
               <th className={styles.th}>ステータス</th>
               <th className={styles.th}>開始日</th>
+              <th className={styles.th}>終了日</th>
             </>
           )}
           rows={items.map((item) => (
@@ -86,6 +90,7 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
                 </Badge>
               </td>
               <td className={styles.td}>{item.starts_on ?? "—"}</td>
+              <td className={styles.td}>{item.ends_on ?? "—"}</td>
             </tr>
           ))}
         />

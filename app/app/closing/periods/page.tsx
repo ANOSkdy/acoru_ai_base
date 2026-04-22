@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import { PageHeader } from "@/src/components/layout/PageHeader";
 import { Badge } from "@/src/components/ui/Badge";
@@ -10,10 +11,9 @@ import {
   formatDateTime,
   getBadgeVariantByStatus,
 } from "@/src/components/operations/presentation";
+import { getServerOrganizationId } from "@/src/server/auth/get-server-organization-id";
 import { listClosingPeriodsService } from "@/src/server/services/closing-periods/list-closing-periods";
 import styles from "@/src/components/operations/OperationsList.module.css";
-
-const FALLBACK_ORG_ID = "00000000-0000-0000-0000-000000000001";
 
 type PageProps = {
   searchParams: Promise<Record<string, string | undefined>>;
@@ -32,6 +32,9 @@ function getClosingStatusLabel(value: string) {
 
 export default async function ClosingPeriodsPage({ searchParams }: PageProps) {
   const params = await searchParams;
+  const organizationId = await getServerOrganizationId();
+  if (!organizationId) notFound();
+
   const status = params.status === "open" || params.status === "closed"
     ? params.status
     : undefined;
@@ -39,7 +42,7 @@ export default async function ClosingPeriodsPage({ searchParams }: PageProps) {
   const dateTo = params.dateTo?.trim() || undefined;
 
   const items = await listClosingPeriodsService({
-    organizationId: FALLBACK_ORG_ID,
+    organizationId,
     status,
     dateFrom,
     dateTo,

@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { Badge } from "@/src/components/ui/Badge";
 import {
   MasterListEmptyState,
@@ -8,10 +9,9 @@ import {
   MasterListPageFrame,
   MasterListTableShell,
 } from "@/src/components/master/MasterListFoundation";
+import { getServerOrganizationId } from "@/src/server/auth/get-server-organization-id";
 import { listSitesService } from "@/src/server/services/sites/list-sites";
 import styles from "@/src/components/master/MasterList.module.css";
-
-const FALLBACK_ORG_ID = "00000000-0000-0000-0000-000000000001";
 
 type PageProps = {
   searchParams: Promise<Record<string, string | undefined>>;
@@ -19,13 +19,16 @@ type PageProps = {
 
 export default async function SitesPage({ searchParams }: PageProps) {
   const params = await searchParams;
+  const organizationId = await getServerOrganizationId();
+  if (!organizationId) notFound();
+
   const q = params.q?.trim() ?? undefined;
   const status = params.status === "active" || params.status === "inactive"
     ? params.status
     : undefined;
 
   const items = await listSitesService({
-    organizationId: FALLBACK_ORG_ID,
+    organizationId,
     search: q,
     status,
     limit: 50,
@@ -54,7 +57,7 @@ export default async function SitesPage({ searchParams }: PageProps) {
               <th className={styles.th}>現場名</th>
               <th className={styles.th}>プロジェクト</th>
               <th className={styles.th}>ステータス</th>
-              <th className={styles.th}>タイムゾーン</th>
+              <th className={styles.th}>住所 / TZ</th>
             </>
           )}
           rows={items.map((item) => (
@@ -85,7 +88,10 @@ export default async function SitesPage({ searchParams }: PageProps) {
                   {item.status === "active" ? "有効" : "無効"}
                 </Badge>
               </td>
-              <td className={styles.td}>{item.timezone}</td>
+              <td className={styles.td}>
+                <div>{item.address ?? "—"}</div>
+                <div style={{ color: "var(--text-muted)", fontSize: "0.8rem" }}>{item.timezone}</div>
+              </td>
             </tr>
           ))}
         />
