@@ -6,7 +6,9 @@ import { PageHeader } from "@/src/components/layout/PageHeader";
 import { UserForm } from "@/src/components/master/UserForm";
 import { Card } from "@/src/components/ui/Card";
 import { getServerOrganizationId } from "@/src/server/auth/get-server-organization-id";
-import { getUserService } from "@/src/server/services/users/get-user";
+import { getUserWithRolesService } from "@/src/server/services/users/get-user";
+import { listRoleOptionsService } from "@/src/server/services/roles/list-roles";
+import { listOrgUnitOptionsService } from "@/src/server/services/org-units/list-org-units";
 import styles from "@/src/components/master/MasterForm.module.css";
 
 type PageProps = {
@@ -18,7 +20,11 @@ export default async function EditUserPage({ params }: PageProps) {
   const organizationId = await getServerOrganizationId();
   if (!organizationId) notFound();
 
-  const user = await getUserService(organizationId, id);
+  const [user, roles, orgUnits] = await Promise.all([
+    getUserWithRolesService(organizationId, id),
+    listRoleOptionsService(),
+    listOrgUnitOptionsService(organizationId),
+  ]);
 
   if (!user) notFound();
 
@@ -36,8 +42,12 @@ export default async function EditUserPage({ params }: PageProps) {
             displayName: user.display_name,
             email: user.email,
             status: user.status as "active" | "inactive",
+            orgUnitId: user.org_unit_id ?? "",
+            roleIds: user.roles.map((role) => role.role_id),
           }}
           cancelHref={`/app/master/users/${id}`}
+          roleOptions={roles.map((r) => ({ id: r.id, name: r.name, code: r.code }))}
+          orgUnitOptions={orgUnits.map((o) => ({ id: o.id, name: o.name }))}
         />
       </Card>
     </div>

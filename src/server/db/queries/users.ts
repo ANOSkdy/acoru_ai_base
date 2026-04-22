@@ -3,6 +3,7 @@ import type { PoolClient, QueryResultRow } from "pg";
 export type UserRow = QueryResultRow & {
   id: string;
   organization_id: string;
+  org_unit_id: string | null;
   display_name: string;
   employee_code: string | null;
   email: string;
@@ -27,10 +28,7 @@ export type UserOptionRow = QueryResultRow & {
   status: string;
 };
 
-export async function listUsers(
-  client: PoolClient,
-  filters: ListUsersFilters,
-) {
+export async function listUsers(client: PoolClient, filters: ListUsersFilters) {
   const values: unknown[] = [filters.organizationId];
   const clauses = ["organization_id = $1"];
 
@@ -55,6 +53,7 @@ export async function listUsers(
       select
         id,
         organization_id,
+        org_unit_id,
         display_name,
         employee_code,
         email,
@@ -73,23 +72,13 @@ export async function listUsers(
   return result.rows;
 }
 
-export async function listUserOptions(
-  client: PoolClient,
-  organizationId: string,
-) {
+export async function listUserOptions(client: PoolClient, organizationId: string) {
   const result = await client.query<UserOptionRow>(
     `
-      select
-        id,
-        display_name,
-        employee_code,
-        email,
-        status
+      select id, display_name, employee_code, email, status
       from users
       where organization_id = $1
-      order by
-        case when status = 'active' then 0 else 1 end,
-        display_name asc
+      order by case when status = 'active' then 0 else 1 end, display_name asc
     `,
     [organizationId],
   );
@@ -97,16 +86,13 @@ export async function listUserOptions(
   return result.rows;
 }
 
-export async function getUserById(
-  client: PoolClient,
-  organizationId: string,
-  id: string,
-) {
+export async function getUserById(client: PoolClient, organizationId: string, id: string) {
   const result = await client.query<UserRow>(
     `
       select
         id,
         organization_id,
+        org_unit_id,
         display_name,
         employee_code,
         email,
@@ -125,32 +111,23 @@ export async function getUserById(
 
 export type InsertUserInput = {
   organizationId: string;
+  orgUnitId?: string | null;
   employeeCode?: string | null;
   displayName: string;
   email: string;
   status: string;
 };
 
-export async function insertUser(
-  client: PoolClient,
-  input: InsertUserInput,
-) {
+export async function insertUser(client: PoolClient, input: InsertUserInput) {
   const result = await client.query<UserRow>(
     `
-      insert into users (organization_id, employee_code, display_name, email, status)
-      values ($1, $2, $3, $4, $5)
-      returning
-        id,
-        organization_id,
-        display_name,
-        employee_code,
-        email,
-        status,
-        created_at::text,
-        updated_at::text
+      insert into users (organization_id, org_unit_id, employee_code, display_name, email, status)
+      values ($1, $2, $3, $4, $5, $6)
+      returning id, organization_id, org_unit_id, display_name, employee_code, email, status, created_at::text, updated_at::text
     `,
     [
       input.organizationId,
+      input.orgUnitId ?? null,
       input.employeeCode ?? null,
       input.displayName,
       input.email,
@@ -162,6 +139,7 @@ export async function insertUser(
 }
 
 export type UpdateUserInput = {
+  orgUnitId?: string | null;
   employeeCode?: string | null;
   displayName?: string;
   email?: string;
@@ -177,6 +155,10 @@ export async function updateUserById(
   const sets: string[] = ["updated_at = now()"];
   const values: unknown[] = [organizationId, id];
 
+  if (input.orgUnitId !== undefined) {
+    values.push(input.orgUnitId);
+    sets.push(`org_unit_id = $${values.length}`);
+  }
   if (input.employeeCode !== undefined) {
     values.push(input.employeeCode);
     sets.push(`employee_code = $${values.length}`);
@@ -199,15 +181,7 @@ export async function updateUserById(
       update users
       set ${sets.join(", ")}
       where organization_id = $1 and id = $2
-      returning
-        id,
-        organization_id,
-        display_name,
-        employee_code,
-        email,
-        status,
-        created_at::text,
-        updated_at::text
+      returning id, organization_id, org_unit_id, display_name, employee_code, email, status, created_at::text, updated_at::text
     `,
     values,
   );

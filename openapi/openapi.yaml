@@ -637,6 +637,269 @@ paths:
           $ref: "#/components/responses/ValidationError"
         "404":
           description: User not found
+
+  /api/v1/roles:
+    get:
+      summary: List roles
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 50
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Role list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Role"
+                  meta:
+                    $ref: "#/components/schemas/ListMeta"
+    post:
+      summary: Create a role
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRoleRequest"
+      responses:
+        "201":
+          description: Role created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Role"
+  /api/v1/roles/{id}:
+    get:
+      summary: Get a role
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      responses:
+        "200":
+          description: Role detail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Role"
+        "404":
+          description: Role not found
+    patch:
+      summary: Update a role
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRoleRequest"
+      responses:
+        "200":
+          description: Role updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Role"
+  /api/v1/organizations:
+    get:
+      summary: List organizations
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [active, inactive]
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 50
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Organization list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Organization"
+                  meta:
+                    $ref: "#/components/schemas/ListMeta"
+    post:
+      summary: Create organization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrganizationRequest"
+      responses:
+        "201":
+          description: Organization created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Organization"
+  /api/v1/organizations/{id}:
+    get:
+      summary: Get organization
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      responses:
+        "200":
+          description: Organization detail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Organization"
+    patch:
+      summary: Update organization
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateOrganizationRequest"
+      responses:
+        "200":
+          description: Organization updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Organization"
+  /api/v1/org-units:
+    get:
+      summary: List org units
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 50
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Org unit list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/OrgUnit"
+                  meta:
+                    $ref: "#/components/schemas/ListMeta"
+    post:
+      summary: Create org unit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrgUnitRequest"
+      responses:
+        "201":
+          description: Org unit created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/OrgUnit"
+  /api/v1/org-units/{id}:
+    get:
+      summary: Get org unit
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      responses:
+        "200":
+          description: Org unit detail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/OrgUnit"
+    patch:
+      summary: Update org unit
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateOrgUnitRequest"
+      responses:
+        "200":
+          description: Org unit updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/OrgUnit"
   /api/v1/projects:
     get:
       summary: List projects
@@ -1539,6 +1802,10 @@ components:
         organization_id:
           type: string
           format: uuid
+        org_unit_id:
+          type: string
+          format: uuid
+          nullable: true
         employee_code:
           type: string
           nullable: true
@@ -1568,6 +1835,13 @@ components:
           type: string
           enum: [active, inactive]
           default: active
+        orgUnitId:
+          type: string
+          format: uuid
+          nullable: true
+        roleIds:
+          type: array
+          items: { type: string, format: uuid }
     UpdateUserRequest:
       type: object
       properties:
@@ -1581,6 +1855,80 @@ components:
         status:
           type: string
           enum: [active, inactive]
+        orgUnitId:
+          type: string
+          format: uuid
+          nullable: true
+        roleIds:
+          type: array
+          items: { type: string, format: uuid }
+
+    Role:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        code: { type: string }
+        name: { type: string }
+        description: { type: string, nullable: true }
+        created_at: { type: string }
+    CreateRoleRequest:
+      type: object
+      required: [code, name]
+      properties:
+        code: { type: string }
+        name: { type: string }
+        description: { type: string }
+    UpdateRoleRequest:
+      type: object
+      properties:
+        code: { type: string }
+        name: { type: string }
+        description: { type: string }
+    Organization:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        code: { type: string }
+        name: { type: string }
+        status: { type: string, enum: [active, inactive] }
+        created_at: { type: string }
+        updated_at: { type: string }
+    CreateOrganizationRequest:
+      type: object
+      required: [code, name]
+      properties:
+        code: { type: string }
+        name: { type: string }
+        status: { type: string, enum: [active, inactive], default: active }
+    UpdateOrganizationRequest:
+      type: object
+      properties:
+        code: { type: string }
+        name: { type: string }
+        status: { type: string, enum: [active, inactive] }
+    OrgUnit:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        organization_id: { type: string, format: uuid }
+        parent_org_unit_id: { type: string, format: uuid, nullable: true }
+        code: { type: string }
+        name: { type: string }
+        created_at: { type: string }
+        updated_at: { type: string }
+    CreateOrgUnitRequest:
+      type: object
+      required: [code, name]
+      properties:
+        code: { type: string }
+        name: { type: string }
+        parentOrgUnitId: { type: string, format: uuid, nullable: true }
+    UpdateOrgUnitRequest:
+      type: object
+      properties:
+        code: { type: string }
+        name: { type: string }
+        parentOrgUnitId: { type: string, format: uuid, nullable: true }
     Project:
       type: object
       properties:
