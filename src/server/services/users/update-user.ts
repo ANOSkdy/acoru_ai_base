@@ -18,16 +18,25 @@ type UpdateUserInput = {
 };
 
 export async function updateUserService(input: UpdateUserInput) {
+  const normalizeNullableText = (value: string | null | undefined) => {
+    if (value === undefined) {
+      return undefined;
+    }
+
+    if (value === null) {
+      return null;
+    }
+
+    const trimmed = value.trim();
+    return trimmed ? trimmed : null;
+  };
+
   return withDbClient(async (client) => {
     await client.query("begin");
     try {
       const row = await updateUserById(client, input.organizationId, input.id, {
-        orgUnitId: input.orgUnitId === undefined
-          ? undefined
-          : (input.orgUnitId.trim() ? input.orgUnitId.trim() : null),
-        employeeCode: input.employeeCode === undefined
-          ? undefined
-          : (input.employeeCode.trim() ? input.employeeCode.trim() : null),
+        orgUnitId: normalizeNullableText(input.orgUnitId),
+        employeeCode: normalizeNullableText(input.employeeCode),
         displayName: input.displayName,
         email: input.email,
         status: input.status,
