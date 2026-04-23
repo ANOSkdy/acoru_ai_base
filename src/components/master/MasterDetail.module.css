@@ -123,3 +123,31 @@
   word-break: break-word;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
+
+@media (max-width: 768px) {
+  .page {
+    padding: 16px 16px 32px;
+  }
+
+  .headerRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .actions {
+    width: 100%;
+  }
+
+  .fieldGrid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .section {
+    overflow-x: auto;
+  }
+
+  .relatedTable {
+    min-width: 560px;
+  }
+}

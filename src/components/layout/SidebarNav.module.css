@@ -11,6 +11,7 @@
   padding: 16px 16px 14px;
   border-bottom: 1px solid var(--border-soft);
   margin-bottom: 8px;
+  position: relative;
 }
 
 .brandName {
@@ -26,6 +27,10 @@
   color: var(--text-muted);
   margin-top: 2px;
   letter-spacing: 0.04em;
+}
+
+.closeButton {
+  display: none;
 }
 
 .topItems {
@@ -88,4 +93,23 @@
 
 .groupItems {
   padding: 2px 8px 4px;
+}
+
+@media (max-width: 768px) {
+  .closeButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface);
+    color: var(--text-body);
+    font-size: 1rem;
+    cursor: pointer;
+  }
 }

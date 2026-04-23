@@ -128,3 +128,21 @@
 .textareaError {
   border-color: #c0392b;
 }
+
+@media (max-width: 768px) {
+  .page {
+    padding: 16px 16px 32px;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .actionRow {
+    flex-direction: column;
+  }
+
+  .actionRow > * {
+    width: 100%;
+  }
+}

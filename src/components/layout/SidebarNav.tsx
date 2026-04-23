@@ -15,6 +15,10 @@ type NavGroup = {
   items: NavItem[];
 };
 
+type SidebarNavProps = {
+  onNavigate?: () => void;
+};
+
 const NAV_ITEMS: NavItem[] = [{ label: "ダッシュボード", href: "/app/dashboard" }];
 
 const NAV_GROUPS: NavGroup[] = [
@@ -34,7 +38,7 @@ const NAV_GROUPS: NavGroup[] = [
   },
 ];
 
-function NavLink({ href, label }: NavItem) {
+function NavLink({ href, label, onNavigate }: NavItem & { onNavigate?: () => void }) {
   const pathname = usePathname();
   const isActive = pathname === href || pathname.startsWith(href + "/");
 
@@ -43,6 +47,7 @@ function NavLink({ href, label }: NavItem) {
       <Link
         href={href}
         className={`${styles.navItem} ${isActive ? styles.navItemActive : ""}`}
+        onClick={onNavigate}
       >
         {label}
       </Link>
@@ -50,7 +55,7 @@ function NavLink({ href, label }: NavItem) {
   );
 }
 
-function NavGroupSection({ group }: { group: NavGroup }) {
+function NavGroupSection({ group, onNavigate }: { group: NavGroup; onNavigate?: () => void }) {
   const [open, setOpen] = useState(true);
 
   return (
@@ -68,7 +73,7 @@ function NavGroupSection({ group }: { group: NavGroup }) {
       {open && (
         <ul className={styles.groupItems}>
           {group.items.map((item) => (
-            <NavLink key={item.href} {...item} />
+            <NavLink key={item.href} {...item} onNavigate={onNavigate} />
           ))}
         </ul>
       )}
@@ -76,24 +81,32 @@ function NavGroupSection({ group }: { group: NavGroup }) {
   );
 }
 
-export function SidebarNav() {
+export function SidebarNav({ onNavigate }: SidebarNavProps) {
   return (
     <nav className={styles.nav}>
       <div className={styles.brand}>
         <span className={styles.brandName}>Acoru</span>
         <span className={styles.brandSub}>業務管理</span>
+        <button
+          type="button"
+          className={styles.closeButton}
+          aria-label="メニューを閉じる"
+          onClick={onNavigate}
+        >
+          ✕
+        </button>
       </div>
 
       <ul className={styles.topItems}>
         {NAV_ITEMS.map((item) => (
-          <NavLink key={item.href} {...item} />
+          <NavLink key={item.href} {...item} onNavigate={onNavigate} />
         ))}
       </ul>
 
       <div className={styles.divider} />
 
       {NAV_GROUPS.map((group) => (
-        <NavGroupSection key={group.label} group={group} />
+        <NavGroupSection key={group.label} group={group} onNavigate={onNavigate} />
       ))}
     </nav>
   );
