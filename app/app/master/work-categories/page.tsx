@@ -7,6 +7,7 @@ import {
   MasterListPageFrame,
   MasterListTableShell,
 } from "@/src/components/master/MasterListFoundation";
+import { DataManagementGuide } from "@/src/components/master/DataManagementGuide";
 import { getServerOrganizationId } from "@/src/server/auth/get-server-organization-id";
 import { listWorkCategoriesService } from "@/src/server/services/work-categories/list-work-categories";
 import styles from "@/src/components/master/MasterList.module.css";
@@ -30,9 +31,14 @@ export default async function WorkCategoriesPage({ searchParams }: PageProps) {
   return (
     <MasterListPageFrame
       title="勤務区分"
-      description="勤務区分マスタを管理します"
+      description="データ管理システムで勤務区分情報を管理します"
       createHref="/app/master/work-categories/new"
     >
+      <DataManagementGuide
+        managedData="勤務区分の名称、コード、区分タイプ、請求対象設定などの運用ルール情報を管理します。"
+        actions="勤務区分の新規作成、詳細確認、編集、検索ができます。"
+        deletionPolicy="運用実績に影響するため、原則削除せず、必要に応じて無効化・名称変更・新規作成で対応する。"
+      />
       <form method="GET" className={styles.filterRow}>
         <input
           name="q"

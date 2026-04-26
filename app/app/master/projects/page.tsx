@@ -9,6 +9,7 @@ import {
   MasterListPageFrame,
   MasterListTableShell,
 } from "@/src/components/master/MasterListFoundation";
+import { DataManagementGuide } from "@/src/components/master/DataManagementGuide";
 import { getServerOrganizationId } from "@/src/server/auth/get-server-organization-id";
 import { listProjectsService } from "@/src/server/services/projects/list-projects";
 import styles from "@/src/components/master/MasterList.module.css";
@@ -38,9 +39,14 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
   return (
     <MasterListPageFrame
       title="プロジェクト"
-      description="プロジェクトの一覧を管理します"
+      description="データ管理システムでプロジェクト情報を管理します"
       createHref="/app/master/projects/new"
     >
+      <DataManagementGuide
+        managedData="プロジェクトの名称、コード、取引先との関連、期間、ステータスを管理します。"
+        actions="プロジェクトの新規作成、詳細確認、編集、検索、ステータス確認ができます。"
+        deletionPolicy="原則として削除ではなく「無効化」または「利用停止」で管理する。"
+      />
       <MasterListFilterRow q={q} status={status} clearHref="/app/master/projects" />
 
       {items.length === 0 ? (

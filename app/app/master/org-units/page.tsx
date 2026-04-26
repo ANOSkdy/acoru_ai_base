@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { DataManagementGuide } from "@/src/components/master/DataManagementGuide";
 import { MasterListEmptyState, MasterListFilterRow, MasterListPageFrame, MasterListTableShell } from "@/src/components/master/MasterListFoundation";
 import { getServerOrganizationId } from "@/src/server/auth/get-server-organization-id";
 import { listOrgUnitsService } from "@/src/server/services/org-units/list-org-units";
@@ -15,7 +16,12 @@ export default async function OrgUnitsPage({ searchParams }: Props) {
   if (!organizationId) notFound();
   const q = params.q?.trim() ?? undefined;
   const items = await listOrgUnitsService({ organizationId, search: q, limit: 50, offset: 0 });
-  return <MasterListPageFrame title="組織ユニット" description="組織ユニットマスタを管理します" createHref="/app/master/org-units/new">
+  return <MasterListPageFrame title="組織ユニット" description="データ管理システムで組織ユニット情報を管理します" createHref="/app/master/org-units/new">
+    <DataManagementGuide
+      managedData="部門・チームなどの組織ユニット情報と階層（親ユニット）を管理します。"
+      actions="組織ユニットの新規作成、詳細確認、編集、検索ができます。"
+      deletionPolicy="原則として削除ではなく「無効化」または「利用停止」で管理する。"
+    />
     <MasterListFilterRow q={q} clearHref="/app/master/org-units" placeholder="名称・コードで検索" />
     {items.length === 0 ? <MasterListEmptyState hasFilters={Boolean(q)} filteredMessage="条件に一致する組織ユニットが見つかりません" defaultMessage="組織ユニットが登録されていません" /> : <MasterListTableShell
       headers={<><th className={styles.th}>コード</th><th className={styles.th}>名称</th><th className={styles.th}>親ユニットID</th></>}

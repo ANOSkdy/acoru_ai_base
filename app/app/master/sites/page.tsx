@@ -9,6 +9,7 @@ import {
   MasterListPageFrame,
   MasterListTableShell,
 } from "@/src/components/master/MasterListFoundation";
+import { DataManagementGuide } from "@/src/components/master/DataManagementGuide";
 import { getServerOrganizationId } from "@/src/server/auth/get-server-organization-id";
 import { listSitesService } from "@/src/server/services/sites/list-sites";
 import styles from "@/src/components/master/MasterList.module.css";
@@ -38,9 +39,14 @@ export default async function SitesPage({ searchParams }: PageProps) {
   return (
     <MasterListPageFrame
       title="現場"
-      description="現場の一覧を管理します"
+      description="データ管理システムで現場情報を管理します"
       createHref="/app/master/sites/new"
     >
+      <DataManagementGuide
+        managedData="現場の名称、コード、所属プロジェクト、住所、タイムゾーン、ステータスを管理します。"
+        actions="現場の新規作成、詳細確認、編集、検索、ステータス確認ができます。"
+        deletionPolicy="原則として削除ではなく「無効化」または「利用停止」で管理する。"
+      />
       <MasterListFilterRow q={q} status={status} clearHref="/app/master/sites" />
 
       {items.length === 0 ? (

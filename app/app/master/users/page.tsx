@@ -9,6 +9,7 @@ import {
   MasterListPageFrame,
   MasterListTableShell,
 } from "@/src/components/master/MasterListFoundation";
+import { DataManagementGuide } from "@/src/components/master/DataManagementGuide";
 import { getServerOrganizationId } from "@/src/server/auth/get-server-organization-id";
 import { listUsersForMasterService } from "@/src/server/services/users/list-users";
 import styles from "@/src/components/master/MasterList.module.css";
@@ -38,9 +39,14 @@ export default async function UsersPage({ searchParams }: PageProps) {
   return (
     <MasterListPageFrame
       title="ユーザー"
-      description="ユーザーマスタの一覧を管理します"
+      description="データ管理システムでユーザー情報を管理します"
       createHref="/app/master/users/new"
     >
+      <DataManagementGuide
+        managedData="ユーザーの基本情報（表示名・社員コード・メールアドレス）と利用状態を管理します。"
+        actions="ユーザーの新規作成、詳細確認、編集、検索、ステータスの確認ができます。"
+        deletionPolicy="原則として削除ではなく「無効化」または「利用停止」で管理する。"
+      />
       <MasterListFilterRow
         q={q}
         status={status}

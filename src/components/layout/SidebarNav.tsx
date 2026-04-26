@@ -19,21 +19,19 @@ type SidebarNavProps = {
   onNavigate?: () => void;
 };
 
-const NAV_ITEMS: NavItem[] = [{ label: "ダッシュボード", href: "/app/dashboard" }];
-
 const NAV_GROUPS: NavGroup[] = [
   {
-    label: "マスター",
+    label: "データ管理",
     items: [
+      { label: "ユーザー", href: "/app/master/users" },
+      { label: "ロール", href: "/app/master/roles" },
+      { label: "組織", href: "/app/master/organizations" },
+      { label: "組織ユニット", href: "/app/master/org-units" },
       { label: "取引先", href: "/app/master/clients" },
       { label: "プロジェクト", href: "/app/master/projects" },
       { label: "現場", href: "/app/master/sites" },
       { label: "勤務区分", href: "/app/master/work-categories" },
       { label: "勤怠ポリシー", href: "/app/master/attendance-policies" },
-      { label: "ユーザー", href: "/app/master/users" },
-      { label: "ロール", href: "/app/master/roles" },
-      { label: "組織", href: "/app/master/organizations" },
-      { label: "組織ユニット", href: "/app/master/org-units" },
     ],
   },
 ];
@@ -86,7 +84,7 @@ export function SidebarNav({ onNavigate }: SidebarNavProps) {
     <nav className={styles.nav}>
       <div className={styles.brand}>
         <span className={styles.brandName}>Acoru</span>
-        <span className={styles.brandSub}>業務管理</span>
+        <span className={styles.brandSub}>データ管理システム</span>
         <button
           type="button"
           className={styles.closeButton}
@@ -96,14 +94,6 @@ export function SidebarNav({ onNavigate }: SidebarNavProps) {
           ✕
         </button>
       </div>
-
-      <ul className={styles.topItems}>
-        {NAV_ITEMS.map((item) => (
-          <NavLink key={item.href} {...item} onNavigate={onNavigate} />
-        ))}
-      </ul>
-
-      <div className={styles.divider} />
 
       {NAV_GROUPS.map((group) => (
         <NavGroupSection key={group.label} group={group} onNavigate={onNavigate} />

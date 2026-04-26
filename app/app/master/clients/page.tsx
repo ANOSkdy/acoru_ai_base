@@ -9,6 +9,7 @@ import {
   MasterListPageFrame,
   MasterListTableShell,
 } from "@/src/components/master/MasterListFoundation";
+import { DataManagementGuide } from "@/src/components/master/DataManagementGuide";
 import { getServerOrganizationId } from "@/src/server/auth/get-server-organization-id";
 import { listClientsService } from "@/src/server/services/clients/list-clients";
 import styles from "@/src/components/master/MasterList.module.css";
@@ -38,9 +39,14 @@ export default async function ClientsPage({ searchParams }: PageProps) {
   return (
     <MasterListPageFrame
       title="取引先"
-      description="契約取引先の一覧を管理します"
+      description="データ管理システムで取引先情報を管理します"
       createHref="/app/master/clients/new"
     >
+      <DataManagementGuide
+        managedData="取引先の名称、コード、契約先としての利用状態を管理します。"
+        actions="取引先の新規作成、詳細確認、編集、検索、ステータス確認ができます。"
+        deletionPolicy="原則として削除ではなく「無効化」または「利用停止」で管理する。"
+      />
       <MasterListFilterRow q={q} status={status} clearHref="/app/master/clients" />
 
       {items.length === 0 ? (
