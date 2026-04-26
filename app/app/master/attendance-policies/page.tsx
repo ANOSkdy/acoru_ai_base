@@ -6,6 +6,7 @@ import {
   MasterListPageFrame,
   MasterListTableShell,
 } from "@/src/components/master/MasterListFoundation";
+import { DataManagementGuide } from "@/src/components/master/DataManagementGuide";
 import { getServerOrganizationId } from "@/src/server/auth/get-server-organization-id";
 import { listAttendancePoliciesService } from "@/src/server/services/attendance-policies/list-attendance-policies";
 import styles from "@/src/components/master/MasterList.module.css";
@@ -29,9 +30,14 @@ export default async function AttendancePoliciesPage({ searchParams }: PageProps
   return (
     <MasterListPageFrame
       title="勤怠ポリシー"
-      description="勤怠ポリシーマスタを管理します"
+      description="データ管理システムで勤怠ポリシーを管理します"
       createHref="/app/master/attendance-policies/new"
     >
+      <DataManagementGuide
+        managedData="勤怠ポリシーの名称、コード、勤怠ルール定義（rules）を管理します。"
+        actions="勤怠ポリシーの新規作成、詳細確認、編集、検索ができます。"
+        deletionPolicy="運用実績に影響するため、原則削除せず、必要に応じて無効化・名称変更・新規作成で対応する。"
+      />
       <form method="GET" className={styles.filterRow}>
         <input
           name="q"

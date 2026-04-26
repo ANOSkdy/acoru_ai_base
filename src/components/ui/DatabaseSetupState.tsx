@@ -49,8 +49,8 @@ export function DatabaseSetupState({
               Retry
             </Button>
           ) : null}
-          <Link href="/app/dashboard" className={styles.link}>
-            Back to dashboard
+          <Link href="/app/master/users" className={styles.link}>
+            Back to data management
           </Link>
           <Link href="/api/v1/health/db" className={styles.link}>
             Open DB health check

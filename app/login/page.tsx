@@ -15,14 +15,14 @@ export default function LoginPage() {
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     // 開発用の仮遷移。認証機能は未実装。
-    router.push("/app/dashboard");
+    router.push("/app/master/users");
   }
 
   return (
     <main className={styles.page}>
       <div className={styles.card}>
         <div className={styles.header}>
-          <p className={styles.platformLabel}>ACORU 業務管理</p>
+          <p className={styles.platformLabel}>ACORU データ管理システム</p>
           <h1 className={styles.title}>ログイン</h1>
           <p className={styles.subtitle}>
             管理者アカウントでサインインしてください
